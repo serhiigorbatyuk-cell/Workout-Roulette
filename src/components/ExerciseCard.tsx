@@ -40,25 +40,25 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
 
   return (
     <div
-      className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-800/90 via-slate-900/90 to-slate-950/90 p-6 shadow-2xl transition-all duration-300 hover:border-emerald-400/40 hover:shadow-emerald-500/10"
+      className="group relative overflow-hidden rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 shadow-2xl transition-all duration-300 hover:border-[color:var(--accent-border)] hover:shadow-accent"
       style={{ animation: `cardIn 0.5s ease-out ${index * 0.12}s both` }}
     >
       {/* accent glow */}
-      <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-emerald-500/15 blur-3xl transition-opacity duration-300 group-hover:bg-emerald-500/25" />
+      <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-[color:var(--accent-soft)] blur-3xl transition-colors duration-300 group-hover:bg-[color:var(--accent-soft-strong)]" />
 
       <div className="relative flex items-start justify-between">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 text-slate-950 shadow-lg shadow-emerald-500/30">
+        <div className="accent-gradient flex h-14 w-14 items-center justify-center rounded-2xl text-[color:var(--accent-ink)] shadow-accent-sm">
           <Icon className="h-7 w-7" strokeWidth={2.5} />
         </div>
-        <span className="rounded-full bg-white/5 px-3 py-1 text-xs font-semibold tracking-wide text-emerald-300 ring-1 ring-emerald-400/20">
+        <span className="rounded-full bg-[color:var(--accent-soft)] px-3 py-1 text-xs font-semibold tracking-wide text-[color:var(--accent)] ring-1 ring-[color:var(--accent-border)]">
           {t("card.exercise", { n: index + 1 })}
         </span>
       </div>
 
-      <h3 className="relative mt-5 text-xl font-bold text-white">
+      <h3 className="relative mt-5 text-xl font-bold text-[color:var(--text)]">
         {t(`exercises.${exercise.id}.name`)}
       </h3>
-      <p className="relative mt-1 text-sm leading-relaxed text-slate-400">
+      <p className="relative mt-1 text-sm leading-relaxed text-[color:var(--text-muted)]">
         {t(`exercises.${exercise.id}.cue`)}
       </p>
 
@@ -67,21 +67,21 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
           <div className="flex items-baseline gap-2">
             <span
               className={`text-4xl font-black tabular-nums tracking-tight ${
-                isDone ? "text-emerald-400" : "text-white"
+                isDone ? "text-[color:var(--accent)]" : "text-[color:var(--text)]"
               }`}
             >
               {remaining.toString().padStart(2, "0")}
             </span>
-            <span className="text-sm font-medium text-slate-500">
+            <span className="text-sm font-medium text-[color:var(--text-faint)]">
               {t("card.seconds")}
             </span>
           </div>
         ) : (
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-black tabular-nums tracking-tight text-white">
+            <span className="text-4xl font-black tabular-nums tracking-tight text-[color:var(--text)]">
               {exercise.reps}
             </span>
-            <span className="text-sm font-medium text-slate-500">
+            <span className="text-sm font-medium text-[color:var(--text-faint)]">
               {t("card.reps")}
             </span>
           </div>
@@ -90,7 +90,7 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
         {isTimeMode && (
           <button
             onClick={() => setRunning((r) => !r)}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-300 ring-1 ring-emerald-400/30 transition-all hover:bg-emerald-400/20 hover:scale-105 active:scale-95"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-[color:var(--accent-soft)] text-[color:var(--accent)] ring-1 ring-[color:var(--accent-border)] transition-all hover:bg-[color:var(--accent-soft-strong)] hover:scale-105 active:scale-95"
             aria-label={running ? t("card.pause") : t("card.start")}
           >
             {isDone ? (
@@ -105,9 +105,9 @@ export function ExerciseCard({ exercise, index }: ExerciseCardProps) {
       </div>
 
       {isTimeMode && (
-        <div className="relative mt-4 h-1.5 w-full overflow-hidden rounded-full bg-white/5">
+        <div className="relative mt-4 h-1.5 w-full overflow-hidden rounded-full bg-[color:var(--border-soft)]">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 transition-all duration-1000 ease-linear"
+            className="accent-gradient-x h-full rounded-full transition-all duration-1000 ease-linear"
             style={{ width: `${progress}%` }}
           />
         </div>

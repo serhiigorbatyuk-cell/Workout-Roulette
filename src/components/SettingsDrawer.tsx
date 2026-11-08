@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { COACH_MODELS, type CoachSettings } from "@/data/aiCoach";
 import { useI18n } from "@/i18n/context";
+import { useTheme } from "@/theme/context";
+import { THEMES } from "@/theme/themes";
 
 interface SettingsDrawerProps {
   open: boolean;
@@ -52,6 +54,7 @@ const FOCUS_OPTIONS: {
 
 export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDrawerProps) {
   const { t } = useI18n();
+  const { theme, setTheme } = useTheme();
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [showKeyForm, setShowKeyForm] = useState(false);
   const [provider, setProvider] = useState("OpenAI");
@@ -94,24 +97,24 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
 
       {/* drawer */}
       <aside
-        className={`fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col border-l border-white/10 bg-slate-900/95 shadow-2xl transition-transform duration-300 ease-out ${
+        className={`fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col border-l border-[color:var(--border)] bg-[color:var(--surface-solid)] shadow-2xl transition-transform duration-300 ease-out ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* header */}
-        <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-[color:var(--border-soft)] px-5 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 text-slate-950 shadow-lg shadow-emerald-500/20">
+            <div className="accent-gradient flex h-10 w-10 items-center justify-center rounded-xl text-[color:var(--accent-ink)] shadow-accent-sm">
               <Bot className="h-6 w-6" strokeWidth={2.5} />
             </div>
             <div>
-              <p className="text-sm font-bold text-white">{t("settings.title")}</p>
-              <p className="text-xs text-slate-500">{t("settings.subtitle")}</p>
+              <p className="text-sm font-bold text-[color:var(--text)]">{t("settings.title")}</p>
+              <p className="text-xs text-[color:var(--text-faint)]">{t("settings.subtitle")}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-slate-400 ring-1 ring-white/10 transition-all hover:bg-white/10 hover:text-white active:scale-95"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[color:var(--surface-3)] text-[color:var(--text-muted)] ring-1 ring-[color:var(--border)] transition-all hover:bg-[color:var(--surface-hover)] hover:text-[color:var(--text)] active:scale-95"
             aria-label={t("settings.close")}
           >
             <X className="h-5 w-5" />
@@ -120,18 +123,54 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
 
         {/* body */}
         <div className="flex-1 overflow-y-auto px-5 py-5">
+          {/* theme */}
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-[color:var(--text-faint)]">
+            {t("settings.theme")}
+          </p>
+          <div className="grid grid-cols-2 gap-2.5">
+            {THEMES.map((option) => {
+              const active = theme === option.id;
+              return (
+                <button
+                  key={option.id}
+                  onClick={() => setTheme(option.id)}
+                  aria-pressed={active}
+                  className={`flex items-center gap-2.5 rounded-2xl border px-3 py-2.5 text-left transition-all ${
+                    active
+                      ? "border-[color:var(--accent-border)] bg-[color:var(--accent-soft)] ring-1 ring-[color:var(--accent-border)]"
+                      : "border-[color:var(--border)] bg-[color:var(--surface-3)] hover:border-[color:var(--border-strong)] hover:bg-[color:var(--surface-hover)]"
+                  }`}
+                >
+                  <span
+                    className="h-7 w-7 shrink-0 rounded-full ring-1 ring-black/20"
+                    style={{ background: option.swatch }}
+                  />
+                  <span
+                    className={`text-xs font-semibold ${
+                      active
+                        ? "text-[color:var(--text)]"
+                        : "text-[color:var(--text-muted)]"
+                    }`}
+                  >
+                    {t(`theme.${option.id}`)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
           {/* enable toggle */}
-          <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3.5">
+          <div className="mt-6 flex items-center justify-between rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-3.5">
             <div>
-              <p className="text-sm font-semibold text-white">{t("coach.title")}</p>
-              <p className={`text-xs ${settings.enabled ? "text-emerald-300" : "text-slate-500"}`}>
+              <p className="text-sm font-semibold text-[color:var(--text)]">{t("coach.title")}</p>
+              <p className={`text-xs ${settings.enabled ? "text-[color:var(--accent)]" : "text-[color:var(--text-faint)]"}`}>
                 {settings.enabled ? t("settings.enabled") : t("settings.disabled")}
               </p>
             </div>
             <button
               onClick={() => onChange({ ...settings, enabled: !settings.enabled })}
-              className={`relative h-7 w-12 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:ring-offset-2 focus:ring-offset-slate-900 ${
-                settings.enabled ? "bg-emerald-500" : "bg-slate-700"
+              className={`relative h-7 w-12 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[color:var(--accent-border)] focus:ring-offset-2 focus:ring-offset-[color:var(--surface-solid)] ${
+                settings.enabled ? "bg-[color:var(--accent)]" : "bg-[color:var(--border-strong)]"
               }`}
               role="switch"
               aria-checked={settings.enabled}
@@ -145,7 +184,7 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
           </div>
 
           {/* AI model */}
-          <p className="mt-6 mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <p className="mt-6 mb-3 text-xs font-semibold uppercase tracking-wide text-[color:var(--text-faint)]">
             {t("settings.model")}
           </p>
           <div className="space-y-2.5">
@@ -157,28 +196,28 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
                   onClick={() => onChange({ ...settings, model: model.value })}
                   className={`w-full rounded-2xl border px-4 py-3 text-left transition-all ${
                     active
-                      ? "border-emerald-400/50 bg-emerald-400/10 ring-1 ring-emerald-400/30"
-                      : "border-white/10 bg-slate-950/40 hover:border-white/20 hover:bg-slate-950/70"
+                      ? "border-[color:var(--accent-border)] bg-[color:var(--accent-soft)] ring-1 ring-[color:var(--accent-border)]"
+                      : "border-[color:var(--border)] bg-[color:var(--surface-3)] hover:border-[color:var(--border-strong)] hover:bg-[color:var(--surface-hover)]"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Bot className={`h-5 w-5 shrink-0 ${active ? "text-emerald-400" : "text-slate-400"}`} />
+                    <Bot className={`h-5 w-5 shrink-0 ${active ? "text-[color:var(--accent)]" : "text-[color:var(--text-muted)]"}`} />
                     <div className="min-w-0 flex-1">
-                      <p className={`truncate text-sm font-medium ${active ? "text-white" : "text-slate-300"}`}>
+                      <p className={`truncate text-sm font-medium ${active ? "text-[color:var(--text)]" : "text-[color:var(--text-soft)]"}`}>
                         {model.label}
                       </p>
-                      <p className="text-xs text-slate-500">{model.provider} · free</p>
+                      <p className="text-xs text-[color:var(--text-faint)]">{model.provider} · free</p>
                     </div>
-                    {active && <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-400 shadow shadow-emerald-400/50" />}
+                    {active && <span className="h-2 w-2 shrink-0 rounded-full bg-[color:var(--accent)] shadow-accent-sm" />}
                   </div>
-                  <p className="mt-2 truncate pl-8 font-mono text-[10px] text-slate-600">{model.value}</p>
+                  <p className="mt-2 truncate pl-8 font-mono text-[10px] text-[color:var(--text-faintest)]">{model.value}</p>
                 </button>
               );
             })}
           </div>
 
           {/* tone */}
-          <p className="mt-6 mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <p className="mt-6 mb-3 text-xs font-semibold uppercase tracking-wide text-[color:var(--text-faint)]">
             {t("settings.tone")}
           </p>
           <div className="space-y-2.5">
@@ -191,23 +230,23 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
                   onClick={() => onChange({ ...settings, tone: opt.value })}
                   className={`flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-all ${
                     active
-                      ? "border-emerald-400/50 bg-emerald-400/10 ring-1 ring-emerald-400/30"
-                      : "border-white/10 bg-slate-950/40 hover:border-white/20 hover:bg-slate-950/70"
+                      ? "border-[color:var(--accent-border)] bg-[color:var(--accent-soft)] ring-1 ring-[color:var(--accent-border)]"
+                      : "border-[color:var(--border)] bg-[color:var(--surface-3)] hover:border-[color:var(--border-strong)] hover:bg-[color:var(--surface-hover)]"
                   }`}
                 >
                   <Icon
-                    className={`h-5 w-5 shrink-0 ${active ? "text-emerald-400" : "text-slate-400"}`}
+                    className={`h-5 w-5 shrink-0 ${active ? "text-[color:var(--accent)]" : "text-[color:var(--text-muted)]"}`}
                   />
                   <div className="flex-1">
-                    <p className={`text-sm font-medium ${active ? "text-white" : "text-slate-300"}`}>
+                    <p className={`text-sm font-medium ${active ? "text-[color:var(--text)]" : "text-[color:var(--text-soft)]"}`}>
                       {t(`settings.tone.${opt.value}.label`)}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-[color:var(--text-faint)]">
                       {t(`settings.tone.${opt.value}.desc`)}
                     </p>
                   </div>
                   {active && (
-                    <span className="h-2 w-2 rounded-full bg-emerald-400 shadow shadow-emerald-400/50" />
+                    <span className="h-2 w-2 rounded-full bg-[color:var(--accent)] shadow-accent-sm" />
                   )}
                 </button>
               );
@@ -215,7 +254,7 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
           </div>
 
           {/* focus */}
-          <p className="mt-6 mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <p className="mt-6 mb-3 text-xs font-semibold uppercase tracking-wide text-[color:var(--text-faint)]">
             {t("settings.focus")}
           </p>
           <div className="space-y-2.5">
@@ -228,23 +267,23 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
                   onClick={() => onChange({ ...settings, focus: opt.value })}
                   className={`flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-all ${
                     active
-                      ? "border-emerald-400/50 bg-emerald-400/10 ring-1 ring-emerald-400/30"
-                      : "border-white/10 bg-slate-950/40 hover:border-white/20 hover:bg-slate-950/70"
+                      ? "border-[color:var(--accent-border)] bg-[color:var(--accent-soft)] ring-1 ring-[color:var(--accent-border)]"
+                      : "border-[color:var(--border)] bg-[color:var(--surface-3)] hover:border-[color:var(--border-strong)] hover:bg-[color:var(--surface-hover)]"
                   }`}
                 >
                   <Icon
-                    className={`h-5 w-5 shrink-0 ${active ? "text-emerald-400" : "text-slate-400"}`}
+                    className={`h-5 w-5 shrink-0 ${active ? "text-[color:var(--accent)]" : "text-[color:var(--text-muted)]"}`}
                   />
                   <div className="flex-1">
-                    <p className={`text-sm font-medium ${active ? "text-white" : "text-slate-300"}`}>
+                    <p className={`text-sm font-medium ${active ? "text-[color:var(--text)]" : "text-[color:var(--text-soft)]"}`}>
                       {t(`settings.focus.${opt.value}.label`)}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-[color:var(--text-faint)]">
                       {t(`settings.focus.${opt.value}.desc`)}
                     </p>
                   </div>
                   {active && (
-                    <span className="h-2 w-2 rounded-full bg-emerald-400 shadow shadow-emerald-400/50" />
+                    <span className="h-2 w-2 rounded-full bg-[color:var(--accent)] shadow-accent-sm" />
                   )}
                 </button>
               );
@@ -252,7 +291,7 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
           </div>
 
           {/* toggles */}
-          <p className="mt-6 mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <p className="mt-6 mb-3 text-xs font-semibold uppercase tracking-wide text-[color:var(--text-faint)]">
             {t("settings.sections")}
           </p>
           <div className="space-y-2.5">
@@ -277,20 +316,20 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
           </div>
 
           {/* API keys */}
-          <div className="mt-6 border-t border-white/5 pt-6">
+          <div className="mt-6 border-t border-[color:var(--border-soft)] pt-6">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="flex items-center gap-2 text-sm font-semibold text-white">
-                  <KeyRound className="h-4 w-4 text-emerald-400" />
+                <p className="flex items-center gap-2 text-sm font-semibold text-[color:var(--text)]">
+                  <KeyRound className="h-4 w-4 text-[color:var(--accent)]" />
                   {t("settings.api.title")}
                 </p>
-                <p className="mt-1 text-xs leading-relaxed text-slate-500">
+                <p className="mt-1 text-xs leading-relaxed text-[color:var(--text-faint)]">
                   {t("settings.api.desc")}
                 </p>
               </div>
               <button
                 onClick={() => setShowKeyForm((current) => !current)}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-400/10 text-emerald-300 ring-1 ring-emerald-400/20 transition-all hover:bg-emerald-400/20 active:scale-95"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[color:var(--accent-soft)] text-[color:var(--accent)] ring-1 ring-[color:var(--accent-border)] transition-all hover:bg-[color:var(--accent-soft-strong)] active:scale-95"
                 aria-label={t("settings.api.addAria")}
               >
                 <Plus className="h-4 w-4" />
@@ -298,11 +337,11 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
             </div>
 
             {showKeyForm && (
-              <div className="mt-4 space-y-3 rounded-2xl border border-emerald-400/20 bg-slate-950/60 p-3">
+              <div className="mt-4 space-y-3 rounded-2xl border border-[color:var(--accent-border)] bg-[color:var(--surface-2)] p-3">
                 <select
                   value={provider}
                   onChange={(event) => setProvider(event.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2.5 text-sm text-white outline-none focus:border-emerald-400/50"
+                  className="w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-solid)] px-3 py-2.5 text-sm text-[color:var(--text)] outline-none focus:border-[color:var(--accent-border)]"
                 >
                   <option>OpenAI</option>
                   <option>Google Gemini</option>
@@ -313,23 +352,23 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
                   value={keyLabel}
                   onChange={(event) => setKeyLabel(event.target.value)}
                   placeholder={t("settings.api.labelPlaceholder")}
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2.5 text-sm text-white outline-none placeholder:text-slate-600 focus:border-emerald-400/50"
+                  className="w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-solid)] px-3 py-2.5 text-sm text-[color:var(--text)] outline-none placeholder:text-[color:var(--text-faintest)] focus:border-[color:var(--accent-border)]"
                 />
                 <input
                   value={keyValue}
                   onChange={(event) => setKeyValue(event.target.value)}
                   type="password"
                   placeholder={t("settings.api.valuePlaceholder")}
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2.5 text-sm text-white outline-none placeholder:text-slate-600 focus:border-emerald-400/50"
+                  className="w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-solid)] px-3 py-2.5 text-sm text-[color:var(--text)] outline-none placeholder:text-[color:var(--text-faintest)] focus:border-[color:var(--accent-border)]"
                 />
                 <button
                   onClick={addApiKey}
                   disabled={!keyValue.trim()}
-                  className="w-full rounded-xl bg-emerald-400 px-3 py-2.5 text-sm font-bold text-slate-950 transition-all hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="w-full rounded-xl bg-[color:var(--accent)] px-3 py-2.5 text-sm font-bold text-[color:var(--accent-ink)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {t("settings.api.add")}
                 </button>
-                <p className="text-[11px] leading-relaxed text-amber-300/80">
+                <p className="text-[11px] leading-relaxed text-[color:var(--warning)]">
                   {t("settings.api.warning")}
                 </p>
               </div>
@@ -342,27 +381,27 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
                   return (
                     <div
                       key={key.id}
-                      className="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2.5"
+                      className="flex items-center gap-3 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-3)] px-3 py-2.5"
                     >
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-slate-400">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[color:var(--surface-3)] text-[color:var(--text-muted)]">
                         <KeyRound className="h-4 w-4" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs font-semibold text-slate-200">{key.label}</p>
-                        <p className="truncate font-mono text-[11px] text-slate-500">
+                        <p className="truncate text-xs font-semibold text-[color:var(--text-soft)]">{key.label}</p>
+                        <p className="truncate font-mono text-[11px] text-[color:var(--text-faint)]">
                           {visible ? key.value : "••••••••••••••••"}
                         </p>
                       </div>
                       <button
                         onClick={() => setVisibleKeyId(visible ? null : key.id)}
-                        className="text-slate-500 transition-colors hover:text-slate-200"
+                        className="text-[color:var(--text-faint)] transition-colors hover:text-[color:var(--text)]"
                         aria-label={visible ? t("settings.api.hide") : t("settings.api.show")}
                       >
                         {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                       <button
                         onClick={() => removeApiKey(key.id)}
-                        className="text-slate-500 transition-colors hover:text-red-400"
+                        className="text-[color:var(--text-faint)] transition-colors hover:text-[color:var(--danger)]"
                         aria-label={t("settings.api.remove")}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -376,10 +415,10 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
         </div>
 
         {/* footer */}
-        <div className="border-t border-white/5 px-5 py-4">
+        <div className="border-t border-[color:var(--border-soft)] px-5 py-4">
           <button
             onClick={onClose}
-            className="w-full rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-500 px-6 py-3 font-bold text-slate-950 shadow-lg shadow-emerald-500/20 transition-all hover:brightness-110 active:scale-[0.98]"
+            className="accent-gradient-x w-full rounded-2xl px-6 py-3 font-bold text-[color:var(--accent-ink)] shadow-accent transition-all hover:shadow-accent-strong hover:brightness-110 active:scale-[0.98]"
           >
             {t("settings.done")}
           </button>
@@ -405,12 +444,12 @@ function ToggleRow({
   const { t } = useI18n();
 
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3">
+    <div className="flex items-center justify-between rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-3)] px-4 py-3">
       <div className="flex items-center gap-3">
-        <Icon className="h-5 w-5 shrink-0 text-slate-400" />
+        <Icon className="h-5 w-5 shrink-0 text-[color:var(--text-muted)]" />
         <div>
-          <p className="text-sm font-medium text-slate-300">{label}</p>
-          <p className={`text-xs ${checked ? "text-emerald-300" : "text-slate-500"}`}>
+          <p className="text-sm font-medium text-[color:var(--text-soft)]">{label}</p>
+          <p className={`text-xs ${checked ? "text-[color:var(--accent)]" : "text-[color:var(--text-faint)]"}`}>
             {checked
               ? `${desc} · ${t("settings.stateOn")}`
               : `${desc} · ${t("settings.stateOff")}`}
@@ -419,8 +458,8 @@ function ToggleRow({
       </div>
       <button
         onClick={onToggle}
-        className={`relative h-7 w-12 shrink-0 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:ring-offset-2 focus:ring-offset-slate-900 ${
-          checked ? "bg-emerald-500" : "bg-slate-700"
+        className={`relative h-7 w-12 shrink-0 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[color:var(--accent-border)] focus:ring-offset-2 focus:ring-offset-[color:var(--surface-solid)] ${
+          checked ? "bg-[color:var(--accent)]" : "bg-[color:var(--border-strong)]"
         }`}
         role="switch"
         aria-checked={checked}
