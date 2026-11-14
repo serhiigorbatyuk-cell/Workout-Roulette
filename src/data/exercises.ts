@@ -102,17 +102,23 @@ const BASE_REPS: Partial<Record<ExerciseId, number>> = {
   legRaises: 14,
 };
 
-export function generateWorkout(difficulty: Difficulty): Exercise[] {
+export function generateWorkout(
+  difficulty: Difficulty,
+  count: number = 3,
+  timeSeconds?: number,
+): Exercise[] {
   const preset = PRESETS[difficulty];
   const shuffled = [...preset.pool].sort(() => Math.random() - 0.5);
-  const picked = shuffled.slice(0, 3);
+  const safeCount = Math.max(1, Math.min(count, preset.pool.length));
+  const picked = shuffled.slice(0, safeCount);
+  const seconds = timeSeconds ?? preset.timeScale;
 
   return picked.map((base) => {
     if (base.mode === "reps") {
       const baseReps = BASE_REPS[base.id] ?? 10;
       return { ...base, reps: scaleReps(baseReps, difficulty) };
     }
-    return { ...base, seconds: preset.timeScale };
+    return { ...base, seconds };
   });
 }
 

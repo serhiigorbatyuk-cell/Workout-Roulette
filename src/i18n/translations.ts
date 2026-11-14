@@ -183,6 +183,13 @@ const uk = {
     "Твоє тіло вміє більше, ніж думає голова. Вірь собі.",
   "motivation.4":
     "Фінішуєш комплекс — заслужив повагу. А потім можна ще коло.",
+  "app.countLabel": "Кількість вправ",
+  "app.countOption": "{n} вправ",
+  "app.durationLabel": "Тривалість вправи",
+  "app.durationOption": "{n} сек",
+  "settings.history": "Історія тренувань",
+  "settings.historyEmpty": "Поки що порожньо",
+  "settings.historyClear": "Очистити",
 } as const;
 
 export type TranslationKey = keyof typeof uk;
@@ -368,6 +375,13 @@ const en: Dictionary = {
     "Your body can do more than your head thinks. Believe in yourself.",
   "motivation.4":
     "Finish the circuit — you've earned respect. And then maybe one more round.",
+  "app.countLabel": "Number of exercises",
+  "app.countOption": "{n} exercises",
+  "app.durationLabel": "Exercise duration",
+  "app.durationOption": "{n} sec",
+  "settings.history": "Workout history",
+  "settings.historyEmpty": "No workouts yet",
+  "settings.historyClear": "Clear",
 };
 
 const es: Dictionary = {
@@ -552,6 +566,13 @@ const es: Dictionary = {
     "Tu cuerpo puede más de lo que piensa tu cabeza. Cree en ti.",
   "motivation.4":
     "Termina el circuito: te has ganado el respeto. Y luego quizá otra vuelta.",
+  "app.countLabel": "Número de ejercicios",
+  "app.countOption": "{n} ejercicios",
+  "app.durationLabel": "Duración del ejercicio",
+  "app.durationOption": "{n} seg",
+  "settings.history": "Historial de entrenamientos",
+  "settings.historyEmpty": "Aún no hay entrenamientos",
+  "settings.historyClear": "Borrar",
 };
 
 const de: Dictionary = {
@@ -736,6 +757,13 @@ const de: Dictionary = {
     "Dein Körper kann mehr, als dein Kopf denkt. Glaub an dich.",
   "motivation.4":
     "Bring den Zirkel zu Ende — das hast du dir verdient. Und dann vielleicht noch eine Runde.",
+  "app.countLabel": "Anzahl der Übungen",
+  "app.countOption": "{n} Übungen",
+  "app.durationLabel": "Übungsdauer",
+  "app.durationOption": "{n} Sek.",
+  "settings.history": "Trainingsverlauf",
+  "settings.historyEmpty": "Noch keine Workouts",
+  "settings.historyClear": "Leeren",
 };
 
 const pl: Dictionary = {
@@ -921,6 +949,13 @@ const pl: Dictionary = {
     "Twoje ciało potrafi więcej, niż myśli głowa. Uwierz w siebie.",
   "motivation.4":
     "Skończ obwód — zasłużyłeś na szacunek. A potem może jeszcze jedna runda.",
+  "app.countLabel": "Liczba ćwiczeń",
+  "app.countOption": "{n} ćwiczeń",
+  "app.durationLabel": "Czas ćwiczenia",
+  "app.durationOption": "{n} sek",
+  "settings.history": "Historia treningów",
+  "settings.historyEmpty": "Brak treningów",
+  "settings.historyClear": "Wyczyść",
 };
 
 export const translations: Record<Lang, Dictionary> = { uk, en, es, de, pl };

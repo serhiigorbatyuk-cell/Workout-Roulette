@@ -14,6 +14,13 @@ import {
   type Exercise,
 } from "@/data/exercises";
 import {
+  createHistoryEntry,
+  addHistoryEntry,
+  loadHistory,
+  clearHistory,
+  type HistoryEntry,
+} from "@/data/workoutHistory";
+import {
   generateCoachPrompt,
   estimateDuration,
   DEFAULT_COACH_SETTINGS,
@@ -37,6 +44,9 @@ export default function App() {
   const [spinning, setSpinning] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settings, setSettings] = useState<CoachSettings>(DEFAULT_COACH_SETTINGS);
+  const [exerciseCount, setExerciseCount] = useState(3);
+  const [exerciseDuration, setExerciseDuration] = useState(30);
+  const [history, setHistory] = useState<HistoryEntry[]>(() => loadHistory());
 
   const coachPrompt = useMemo(() => {
     if (!workout || !difficulty) return "";
@@ -53,11 +63,13 @@ export default function App() {
     setState("empty");
     setWorkout(null);
     setTimeout(() => {
-      const w = generateWorkout(difficulty);
+      const w = generateWorkout(difficulty, exerciseCount, exerciseDuration);
       setWorkout(w);
       setDuration(estimateDuration(w));
       setState("success");
       setSpinning(false);
+      const entry = createHistoryEntry(difficulty, w);
+      setHistory(addHistoryEntry(entry));
     }, 650);
   }
 
@@ -171,6 +183,48 @@ export default function App() {
             <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[color:var(--text-muted)]" />
           </div>
 
+          {/* workout options */}
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-[color:var(--text-soft)]">
+                {t("app.countLabel")}
+              </label>
+              <div className="relative">
+                <select
+                  value={exerciseCount}
+                  onChange={(e) => setExerciseCount(Number(e.target.value))}
+                  className="w-full appearance-none rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-3.5 pr-12 text-base font-medium text-[color:var(--text)] outline-none transition-all focus:border-[color:var(--accent-border)] focus:ring-1 focus:ring-[color:var(--accent-border)]"
+                >
+                  {[2, 3, 4, 5].map((n) => (
+                    <option key={n} value={n} className="bg-[color:var(--surface-solid)]">
+                      {t("app.countOption", { n })}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[color:var(--text-muted)]" />
+              </div>
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-[color:var(--text-soft)]">
+                {t("app.durationLabel")}
+              </label>
+              <div className="relative">
+                <select
+                  value={exerciseDuration}
+                  onChange={(e) => setExerciseDuration(Number(e.target.value))}
+                  className="w-full appearance-none rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-3.5 pr-12 text-base font-medium text-[color:var(--text)] outline-none transition-all focus:border-[color:var(--accent-border)] focus:ring-1 focus:ring-[color:var(--accent-border)]"
+                >
+                  {[15, 30, 45, 60].map((n) => (
+                    <option key={n} value={n} className="bg-[color:var(--surface-solid)]">
+                      {t("app.durationOption", { n })}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[color:var(--text-muted)]" />
+              </div>
+            </div>
+          </div>
+
           {/* main action button */}
           <button
             onClick={handleSpin}
@@ -264,7 +318,9 @@ export default function App() {
       <SettingsDrawer
         open={settingsOpen}
         settings={settings}
+        history={history}
         onChange={handleSettingsChange}
+        onClearHistory={() => { clearHistory(); setHistory([]); }}
         onClose={() => setSettingsOpen(false)}
       />
     </div>

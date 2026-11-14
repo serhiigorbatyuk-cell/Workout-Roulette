@@ -16,14 +16,25 @@ import {
   EyeOff,
 } from "lucide-react";
 import { COACH_MODELS, type CoachSettings } from "@/data/aiCoach";
+import type { HistoryEntry } from "@/data/workoutHistory";
 import { useI18n } from "@/i18n/context";
 import { useTheme } from "@/theme/context";
+
+const LOCALE_BY_LANG: Record<string, string> = {
+  uk: "uk-UA",
+  en: "en-US",
+  es: "es-ES",
+  de: "de-DE",
+  pl: "pl-PL",
+};
 import { THEMES } from "@/theme/themes";
 
 interface SettingsDrawerProps {
   open: boolean;
   settings: CoachSettings;
+  history: HistoryEntry[];
   onChange: (settings: CoachSettings) => void;
+  onClearHistory: () => void;
   onClose: () => void;
 }
 
@@ -52,8 +63,8 @@ const FOCUS_OPTIONS: {
   { value: "recovery", icon: HeartPulse },
 ];
 
-export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDrawerProps) {
-  const { t } = useI18n();
+export function SettingsDrawer({ open, settings, history, onChange, onClearHistory, onClose }: SettingsDrawerProps) {
+  const { t, lang } = useI18n();
   const { theme, setTheme } = useTheme();
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [showKeyForm, setShowKeyForm] = useState(false);
@@ -157,6 +168,54 @@ export function SettingsDrawer({ open, settings, onChange, onClose }: SettingsDr
                 </button>
               );
             })}
+          </div>
+
+          {/* history */}
+          <div className="mt-6 border-t border-[color:var(--border-soft)] pt-6">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--text-faint)]">
+                {t("settings.history")}
+              </p>
+              {history.length > 0 && (
+                <button
+                  onClick={onClearHistory}
+                  className="text-xs font-medium text-[color:var(--text-faint)] transition-colors hover:text-[color:var(--danger)]"
+                >
+                  {t("settings.historyClear")}
+                </button>
+              )}
+            </div>
+            {history.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-6 text-center text-xs text-[color:var(--text-faint)]">
+                {t("settings.historyEmpty")}
+              </p>
+            ) : (
+              <div className="space-y-2.5">
+                {history.slice(0, 15).map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-3)] px-4 py-3"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-xs font-semibold text-[color:var(--text-soft)]">
+                        {t(`difficulty.${entry.difficulty}`)}
+                      </p>
+                      <p className="text-[11px] text-[color:var(--text-faint)]">
+                        {new Date(entry.date).toLocaleDateString(
+                          LOCALE_BY_LANG[lang] ?? "en-US",
+                          { day: "numeric", month: "short", year: "numeric" },
+                        )}
+                      </p>
+                    </div>
+                    <p className="mt-1 text-[11px] leading-relaxed text-[color:var(--text-faint)]">
+                      {entry.exercises
+                        .map((ex) => t(`exercises.${ex.id}.name`))
+                        .join(", ")}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* enable toggle */}
